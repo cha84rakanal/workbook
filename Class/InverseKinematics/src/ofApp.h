@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxDatGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -21,6 +22,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		void onSliderEvent(ofxDatGuiSliderEvent e);
+
 		ofVec2f o;
 		ofVec2f e1;
 		ofVec2f e2;
@@ -34,4 +37,6 @@ class ofApp : public ofBaseApp{
 		float l2;
 		float l3;
 		
+		ofxDatGui* gui;
+
 };
