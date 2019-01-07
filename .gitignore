@@ -161,6 +161,6 @@ Desktop.ini
 /Metal/MetalBook
 .DS_Store
 Shader/ofShaderTest1/bin/*
-Shader/ofShaderTest1/bin/data/
+!Shader/ofShaderTest1/bin/data/
 
 TextBook

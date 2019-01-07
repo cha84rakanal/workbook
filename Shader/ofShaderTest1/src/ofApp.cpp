@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    ofSetFrameRate(60);
 }
 
 //--------------------------------------------------------------
@@ -12,7 +12,13 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    shader.load("","shader.frag");
+    
+    shader.begin();
+    shader.setUniform1f("u_time", ofGetElapsedTimef());
+    shader.setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
+    ofRect(0,0,ofGetWidth(), ofGetHeight());
+    shader.end();
 }
 
 //--------------------------------------------------------------
