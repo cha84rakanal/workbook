@@ -24,10 +24,15 @@ class ofApp : public ofBaseApp{
 
 		void onSliderEvent(ofxDatGuiSliderEvent e);
 
+		void ccd(ofVec2f target);
+		void fk_update();
+
 		ofVec2f o;
 		ofVec2f e1;
 		ofVec2f e2;
 		ofVec2f e3;
+
+		ofVec2f mouse_pos;
 
 		float theta1; //deg
 		float theta2;

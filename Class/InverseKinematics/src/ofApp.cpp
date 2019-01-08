@@ -50,9 +50,55 @@ void ofApp::setup(){
 }
 
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e){
+    //e1 = ofVec2f(l1 * cos(ofDegToRad(theta1)),l1 * sin(ofDegToRad(theta1)));
+    //e2 = ofVec2f(e1.x + l2 * cos(ofDegToRad(theta1 + theta2)),e1.y + l2 * sin(ofDegToRad(theta1 + theta2)));
+    //e3 = ofVec2f(e2.x + l3 * cos(ofDegToRad(theta1 + theta2 + theta3)),e2.y + l3 * sin(ofDegToRad(theta1 + theta2 + theta3)));
+    fk_update();
+}
+
+void ofApp::fk_update(){
     e1 = ofVec2f(l1 * cos(ofDegToRad(theta1)),l1 * sin(ofDegToRad(theta1)));
     e2 = ofVec2f(e1.x + l2 * cos(ofDegToRad(theta1 + theta2)),e1.y + l2 * sin(ofDegToRad(theta1 + theta2)));
     e3 = ofVec2f(e2.x + l3 * cos(ofDegToRad(theta1 + theta2 + theta3)),e2.y + l3 * sin(ofDegToRad(theta1 + theta2 + theta3)));
+}
+
+//http://jsdo.it/edo_m18/c5vn
+//https://qiita.com/keitanxkeitan/items/d16c95635c1087a91036
+//https://mukai-lab.org/content/CcdParticleInverseKinematics.pdf
+//http://www.thothchildren.com/chapter/5b4e209a103f2f316871121a
+void ofApp::ccd(ofVec2f target){
+
+//step1
+    theta3 += (ofRadToDeg(atan2((target-e2).y,(target-e2).x)) - ofRadToDeg(atan2((e3-e2).y,(e3-e2).x)));
+
+    if(theta3 < -180)
+        theta3 += 360;
+    if(theta3 > 180)
+        theta3 -= 360;
+
+    fk_update();
+
+//step2
+    theta2 += (ofRadToDeg(atan2((target-e1).y,(target-e1).x)) - ofRadToDeg(atan2((e3-e1).y,(e3-e1).x)));
+    if(theta2 < -180)
+        theta2 += 360;
+    if(theta2 > 180)
+        theta2 -= 360;
+    
+    fk_update();
+
+//step1
+    theta1 += (ofRadToDeg(atan2((target-o).y,(target-o).x)) - ofRadToDeg(atan2((e3-o).y,(e3-o).x)));
+    if(theta1 < -180)
+        theta1 += 360;
+    if(theta1 > 180)
+        theta1 -= 360;
+    
+    fk_update();
+
+    //e2+e3 -> e2 + target theta3
+    //e1+e3 -> e1 + target theta2
+    //o +e3 -> o  + target theta1
 }
 
 //--------------------------------------------------------------
@@ -109,8 +155,10 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    std::cout << x - ofGetWidth()/2 << "," << ofGetHeight()/2 - y << std::endl;
-    
+    //std::cout << x - ofGetWidth()/2 << "," << ofGetHeight()/2 - y << std::endl;
+
+    for(int i = 0; i < 100; i++)
+        ccd(ofVec2f(x - ofGetWidth()/2,ofGetHeight()/2 - y));
 }
 
 //--------------------------------------------------------------
