@@ -6,6 +6,9 @@ void ofApp::setup(){
 
     ofTrueTypeFont::setGlobalDpi(108);
 
+    max_iter = 100;
+    epsilon = 0.000001;
+
     l1 = 150;
     l2 = 150;
     l3 = 150;
@@ -20,9 +23,6 @@ void ofApp::setup(){
     e3 = ofVec2f(e2.x + l3 * cos(ofDegToRad(theta1 + theta2 + theta3)),e2.y + l3 * sin(ofDegToRad(theta1 + theta2 + theta3)));
 
     gui = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
-    //gui = new ofxDatGui(-ofGetWidth()/2,-ofGetHeight()/2);
-
-    //gui->setupFont("Verdana.ttf");
 
     gui->addFRM();
     gui->addBreak()->setHeight(10.0f);
@@ -45,14 +45,17 @@ void ofApp::setup(){
     ee2->bind(theta2);
     ee3->bind(theta3);
 
+    gui->addBreak()->setHeight(10.0f);
+    gui->addLabel("MAX ITERATION");
+    ofxDatGuiSlider* m_iters = gui->addSlider("MAX ITERATION", 1, 200);
+
+    m_iters->bind(max_iter);
+
     gui->onSliderEvent(this, &ofApp::onSliderEvent);
 
 }
 
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e){
-    //e1 = ofVec2f(l1 * cos(ofDegToRad(theta1)),l1 * sin(ofDegToRad(theta1)));
-    //e2 = ofVec2f(e1.x + l2 * cos(ofDegToRad(theta1 + theta2)),e1.y + l2 * sin(ofDegToRad(theta1 + theta2)));
-    //e3 = ofVec2f(e2.x + l3 * cos(ofDegToRad(theta1 + theta2 + theta3)),e2.y + l3 * sin(ofDegToRad(theta1 + theta2 + theta3)));
     fk_update();
 }
 
@@ -87,7 +90,7 @@ void ofApp::ccd(ofVec2f target){
     
     fk_update();
 
-//step1
+//step3
     theta1 += (ofRadToDeg(atan2((target-o).y,(target-o).x)) - ofRadToDeg(atan2((e3-o).y,(e3-o).x)));
     if(theta1 < -180)
         theta1 += 360;
@@ -129,6 +132,9 @@ void ofApp::draw(){
         ofDrawLine(e2.x,e2.y,e3.x,e3.y);
 
         ofDrawCircle(e3.x,e3.y,5);
+
+        ofSetColor(ofColor(255,0,0));
+        ofDrawCircle(mouse_pos.x,mouse_pos.y,5);
     ofPopMatrix();
     
 }
@@ -155,10 +161,18 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    //std::cout << x - ofGetWidth()/2 << "," << ofGetHeight()/2 - y << std::endl;
 
-    for(int i = 0; i < 100; i++)
-        ccd(ofVec2f(x - ofGetWidth()/2,ofGetHeight()/2 - y));
+    mouse_pos.x = x - ofGetWidth()/2;
+    mouse_pos.y = ofGetHeight()/2 - y;
+
+    if(!(x < gui->getWidth() && y < gui->getHeight()))
+        for(int i = 0; i < max_iter; i++){
+            ccd(mouse_pos);
+
+            if((e3 - mouse_pos).length() < epsilon){
+                break;
+            }
+        }
 }
 
 //--------------------------------------------------------------

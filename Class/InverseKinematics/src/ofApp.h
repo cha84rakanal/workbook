@@ -42,6 +42,9 @@ class ofApp : public ofBaseApp{
 		float l2;
 		float l3;
 		
+		int max_iter; //最大試行回数
+		double epsilon; //許容誤差
+
 		ofxDatGui* gui;
 
 };
