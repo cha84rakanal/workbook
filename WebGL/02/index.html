@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>WebGL TEST</title>
+        <script src="script.js" type="text/javascript"></script>
+        <script src="https://wgld.org/j/minMatrix.js"></script>
+    </head>
+    <script id="vs" type="x-shader/x-vertex">
+attribute vec4 position; //attributeはそれぞれ
+//attribute vec4 color;
+uniform mat4 mvpMatrix; //uniformは全てに対して同じ
+//varying vec4 vColor; //次にわたすやつ
+
+void main(void) {
+//    vColor = color;
+    gl_Position = mvpMatrix * position;
+}
+    </script>
+    
+    <script id="fs" type="x-shader/x-fragment">
+//varying vec4 vColor;
+
+void main(void){
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+//    gl_FragColor = vColor;
+}
+    </script>
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+</html>
