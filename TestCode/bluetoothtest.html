@@ -1,0 +1,17 @@
+<html>
+    <head>
+    <title>Bluetooth Test</title>
+    </head>
+    <body>
+<script type="text/javascript">
+
+function onconnect() {
+    navigator.bluetooth.requestDevice({acceptAllDevices:true})
+    .catch(error => console.log(error));
+}
+
+</script>
+
+<button id="connect" onclick="onconnect()">接続</button>
+    </body>
+</html>
