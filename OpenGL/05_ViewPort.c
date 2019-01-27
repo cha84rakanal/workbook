@@ -31,6 +31,9 @@ void resize(int w, int h){
 
     /* スクリーン上の表示領域をビューポートの大きさに比例させる */
     glOrtho(-w / 200.0, w / 200.0, -h / 200.0, h / 200.0, -1.0, 1.0);
+
+    //left,right,buttom,right,near,far
+    //デフォルトは300,300なので、横の表示座標は、-1.5右1.5、上も1.5、-1.5になる
 }
 
 void init(void){
