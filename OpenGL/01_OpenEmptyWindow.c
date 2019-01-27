@@ -15,4 +15,4 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-//cc 01_OpenEmptyWindow.c -framework GLUT -framework GLUT -mmacosx-version-min=10.8
+//cc 01_OpenEmptyWindow.c -framework GLUT -framework OpenGL -mmacosx-version-min=10.8
