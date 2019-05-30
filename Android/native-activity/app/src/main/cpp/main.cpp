@@ -62,6 +62,19 @@ struct engine {
     struct saved_state state;
 };
 
+void ShowUI(struct engine* engine) {
+    JNIEnv* jni;
+    engine->app->activity->vm->AttachCurrentThread(&jni, NULL);
+
+    // Default class retrieval
+    jclass clazz = jni->GetObjectClass(engine->app->activity->clazz);
+    jmethodID methodID = jni->GetMethodID(clazz, "showUI", "()V");
+    jni->CallVoidMethod(engine->app->activity->clazz, methodID);
+
+    engine->app->activity->vm->DetachCurrentThread();
+    return;
+}
+
 /**
  * Initialize an EGL context for the current display.
  */
@@ -151,6 +164,8 @@ static int engine_init_display(struct engine* engine) {
     glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
+    ShowUI(engine);
+
     return 0;
 }
 
@@ -196,10 +211,12 @@ static void engine_term_display(struct engine* engine) {
  */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
     struct engine* engine = (struct engine*)app->userData;
+    LOGW("Touch !!");
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         engine->animating = 1;
         engine->state.x = AMotionEvent_getX(event, 0);
         engine->state.y = AMotionEvent_getY(event, 0);
+        LOGW("Touch Pos: x = %d , y = %d",engine->state.x,engine->state.y);
         return 1;
     }
     return 0;
@@ -209,6 +226,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
  * Process the next main command.
  */
 static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
+
     struct engine* engine = (struct engine*)app->userData;
     switch (cmd) {
         case APP_CMD_SAVE_STATE:
@@ -354,9 +372,9 @@ void android_main(struct android_app* state) {
                     ASensorEvent event;
                     while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
                                                        &event, 1) > 0) {
-                        LOGI("accelerometer: x=%f y=%f z=%f",
-                             event.acceleration.x, event.acceleration.y,
-                             event.acceleration.z);
+                        //LOGI("accelerometer: x=%f y=%f z=%f",
+                        //     event.acceleration.x, event.acceleration.y,
+                        //     event.acceleration.z);
                     }
                 }
             }
