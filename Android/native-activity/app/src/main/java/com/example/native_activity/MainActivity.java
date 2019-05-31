@@ -36,14 +36,13 @@ public class MainActivity extends NativeActivity {
             setImmersiveSticky();
             View decorView = getWindow().getDecorView();
             decorView.setOnSystemUiVisibilityChangeListener
-                    (new View.OnSystemUiVisibilityChangeListener() {
-                        @Override
-                        public void onSystemUiVisibilityChange(int visibility) {
-                            setImmersiveSticky();
-                        }
-                    });
+                (new View.OnSystemUiVisibilityChangeListener(){
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        setImmersiveSticky();
+                    }
+                });
         }
-
     }
 
     @TargetApi(19)
@@ -64,7 +63,6 @@ public class MainActivity extends NativeActivity {
     protected void onPause(){
         super.onPause();
     }
-    // Our popup window, you will call it from your C/C++ code later
 
     @TargetApi(19)
     void setImmersiveSticky() {
@@ -78,13 +76,15 @@ public class MainActivity extends NativeActivity {
     }
 
     public void updatePos(final float x,final float y){
-        this.runOnUiThread(new Runnable()  {
+        this.runOnUiThread(new Runnable(){
             @Override
             public void run()  {
                 _label.setText("x pos = " + x + " ,y pos = " + y);
-            }});
+            }
+        });
     }
 
+    // Our popup window, you will call it from your C/C++ code later
     @SuppressLint("InflateParams")
     public void showUI() {
 
@@ -103,7 +103,6 @@ public class MainActivity extends NativeActivity {
                         = (LayoutInflater)getBaseContext()
                         .getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = layoutInflater.inflate(R.layout.widgets, null);
-                //popupView.setFocusable(false);
 
                 _label = popupView.findViewById(R.id.text_view);
 
@@ -122,7 +121,6 @@ public class MainActivity extends NativeActivity {
                     popupView.setSystemUiVisibility(uiOptions);
                 }
 
-                //_popupWindow.setFocusable(false);
                 LinearLayout mainLayout = new LinearLayout(_activity);
                 ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
                 params.setMargins(0, 0, 0, 0);
