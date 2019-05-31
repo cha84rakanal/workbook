@@ -105,7 +105,7 @@ public class MainActivity extends NativeActivity {
                 View popupView = layoutInflater.inflate(R.layout.widgets, null);
                 //popupView.setFocusable(false);
 
-                _label = popupView.findViewById(R.id.textView);
+                _label = popupView.findViewById(R.id.text_view);
 
                 _popupWindow = new PopupWindow(
                         popupView,
