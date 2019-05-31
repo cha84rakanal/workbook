@@ -3,6 +3,7 @@ package com.example.native_activity;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,7 +21,7 @@ public class MainActivity extends NativeActivity {
 
     MainActivity _activity;
     PopupWindow _popupWindow;
-    //TextView _label;
+    TextView _label;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +77,18 @@ public class MainActivity extends NativeActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
 
-    @Override
-    public boolean dispatchTouchEvent (MotionEvent ev){
-        Log.e("on distouch","touch call");
-        return false;
+    public void updatePos(final float x,final float y){
+        this.runOnUiThread(new Runnable()  {
+            @Override
+            public void run()  {
+                _label.setText("x pos = " + x + " ,y pos = " + y);
+            }});
     }
 
     @SuppressLint("InflateParams")
     public void showUI() {
 
         Log.v("java_code","showui Called");
-
 
         if( _popupWindow != null )
             return;
@@ -97,61 +99,39 @@ public class MainActivity extends NativeActivity {
             @Override
             public void run()  {
 
-                View decorView = getWindow().getDecorView();
-                decorView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v,MotionEvent event){
-                        Log.e("decor","touch touch call");
-                        return false;
-                    }
-                });
-
                 LayoutInflater layoutInflater
                         = (LayoutInflater)getBaseContext()
                         .getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = layoutInflater.inflate(R.layout.widgets, null);
                 //popupView.setFocusable(false);
 
+                _label = popupView.findViewById(R.id.textView);
+
                 _popupWindow = new PopupWindow(
                         popupView,
                         WindowManager.LayoutParams.WRAP_CONTENT,
                         WindowManager.LayoutParams.WRAP_CONTENT);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                    popupView.setSystemUiVisibility(uiOptions);
+                }
 
                 //_popupWindow.setFocusable(false);
                 LinearLayout mainLayout = new LinearLayout(_activity);
                 ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
                 params.setMargins(0, 0, 0, 0);
 
-
-                popupView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v,MotionEvent event){
-                        Log.e("on touch","touch call");
-                        return false;
-                    }
-                });
-
-
-                //ViewParent vp = popupView.getParent();
-                //Log.e("viewparent",vp.toString());
-
                 _activity.setContentView(mainLayout, params);
 
                 // Show our UI over NativeActivity window
                 _popupWindow.showAtLocation(mainLayout, Gravity.TOP | Gravity.START, 0, 0);
-                //_popupWindow.setTouchable(false);
-                //_popupWindow.setSplitTouchEnabled(true);
                 _popupWindow.update();
-
-                _popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        Log.e("on int","touch call");
-                        return false;
-                    }
-                });
-
-                //_label = popupView.findViewById(R.id.textViewFPS);
 
             }});
 
