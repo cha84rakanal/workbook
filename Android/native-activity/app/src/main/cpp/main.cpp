@@ -27,12 +27,16 @@
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 
+#include <math.h>
+
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+
+#define PI 3.1415926
 
 /**
  * Our saved state data.
@@ -179,8 +183,7 @@ static void engine_draw_frame(struct engine* engine) {
     }
 
     // Just fill the screen with a color.
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-                 ((float)engine->state.y)/engine->height, 1);
+    glClearColor((sin(engine->state.angle*PI/180)+1.0)/2.0,(cos(engine->state.angle*PI/180)+1.0)/2.0,(sin(engine->state.angle*PI*2/180)+1.0)/2.0,1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     eglSwapBuffers(engine->display, engine->surface);
@@ -206,6 +209,20 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
+static void sendPos(struct android_app* app){
+    struct engine* engine = (struct engine*)app->userData;
+    JNIEnv* jni;
+    engine->app->activity->vm->AttachCurrentThread(&jni, NULL);
+
+    // Default class retrieval
+    jclass clazz = jni->GetObjectClass(engine->app->activity->clazz);
+    jmethodID methodID = jni->GetMethodID(clazz, "updatePos", "(FF)V");
+    jni->CallVoidMethod(engine->app->activity->clazz, methodID,(float)engine->state.x,(float)engine->state.y);
+
+    engine->app->activity->vm->DetachCurrentThread();
+    return;
+}
+
 /**
  * Process the next input event.
  */
@@ -216,7 +233,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
         engine->animating = 1;
         engine->state.x = AMotionEvent_getX(event, 0);
         engine->state.y = AMotionEvent_getY(event, 0);
-        LOGW("Touch Pos: x = %d , y = %d",engine->state.x,engine->state.y);
+        //LOGW("Touch Pos: x = %d , y = %d",engine->state.x,engine->state.y);
+        sendPos(app);
         return 1;
     }
     return 0;
@@ -317,6 +335,10 @@ ASensorManager* AcquireASensorManagerInstance(android_app* app) {
   return getInstanceFunc();
 }
 
+//JNIEXPORT jstring JNICALL
+//Java_com_example_native_activity_MainActivity_stringFromJNI(JNIEnv* env,jobject thiz){
+//
+//}
 
 /**
  * This is the main entry point of a native application that is using
@@ -388,8 +410,8 @@ void android_main(struct android_app* state) {
 
         if (engine.animating) {
             // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
+            engine.state.angle += 1.0f;
+            if (engine.state.angle > 360) {
                 engine.state.angle = 0;
             }
 
