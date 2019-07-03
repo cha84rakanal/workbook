@@ -2,11 +2,11 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html" version="4.01" encoding="UTF-8" indent="yes" />
 
-<xsl:param name="title"/>
+<xsl:param name="akey"/>
 
 <xsl:template match="/">
 
-<div class="docs-text-styling" align="right"><xsl:value-of select="count(/books/item[contains(normalize-space(title),$title)])" />件</div>
+<div class="docs-text-styling" align="right"><xsl:value-of select="count(/books/item[contains(normalize-space(creator),$akey)])" />件</div>
 <table id="result" class="mdl-data-table mdl-js-data-table" style="width:100%;margin:0 auto;">
     <thead>
         <tr>
@@ -16,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-      <xsl:apply-templates select="/books/item[contains(normalize-space(title),$title)]"/>
+      <xsl:apply-templates select="/books/item[contains(normalize-space(creator),$akey)]"/>
     </tbody>
 </table>
 

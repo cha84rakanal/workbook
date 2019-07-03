@@ -8,24 +8,14 @@ cgi = CGI.new
 
 xslt = XML::XSLT.new
 xslt.xml = "data0509.xml"
-xslt.xsl = "book_detail.xsl"
+xslt.xsl = "author_detail.xsl"
 keyw = ""
 
-xslt_s = XML::XSLT.new
-xslt_s.xml = "data0509.xml"
-xslt_s.xsl = "suggest.xsl"
-XML::XSLT.registerExtFunc("http://mina/","sample") do |items,n|
-    items.sample(n)
+if cgi.include?('akey') then
+  keyw = cgi["akey"]
 end
-
-
-if cgi.include?('id') then
-  keyw = cgi["id"]
-end
-xslt.parameters = { "title" => keyw }
-xslt_s.parameters = { "title" => keyw }
+xslt.parameters = { "akey" => keyw }
 out = xslt.serve()
-out_s = xslt_s.serve()
 
 print cgi.header("text/html; charset=UTF-8")
 
@@ -38,12 +28,11 @@ print <<EOS
     <link rel="stylesheet" href="./styles.css">
     </head>
     <body>
+<div class="mdl-typography--headline">
+#{keyw}の著書 
+</div>
 EOS
 print out
-print <<EOS
-<h4>キーワードから推測されたあなたへのおすすめ</h4>
-EOS
-print out_s
 print <<EOS
     <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     </body>

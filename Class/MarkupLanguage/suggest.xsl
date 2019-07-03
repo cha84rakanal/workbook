@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:set="http://exslt.org/sets" xmlns:mina="http://mina/" version="1.0">
 <xsl:output method="html" version="4.01" encoding="UTF-8" indent="yes" />
 
 <xsl:param name="title"/>
 
 <xsl:template match="/">
-
-<div class="docs-text-styling" align="right"><xsl:value-of select="count(/books/item[contains(normalize-space(title),$title)])" />件</div>
 <table id="result" class="mdl-data-table mdl-js-data-table" style="width:100%;margin:0 auto;">
     <thead>
         <tr>
@@ -16,10 +14,14 @@
         </tr>
     </thead>
     <tbody>
-      <xsl:apply-templates select="/books/item[contains(normalize-space(title),$title)]"/>
+        <xsl:apply-templates select="/books/item[@no=$title]/keywords/keyword"/>
     </tbody>
 </table>
+</xsl:template>
 
+<xsl:template match="keyword">
+    <xsl:variable name="sub" select="."/>
+    <xsl:apply-templates select="mina:sample(/books/item[contains(keywords/keyword,$sub)],3)"/>
 </xsl:template>
 
 <xsl:template match="item">

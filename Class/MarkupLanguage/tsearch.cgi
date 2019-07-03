@@ -27,16 +27,32 @@ print <<EOS
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-red.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script type="module">
+    'use strict';
     window.onload = () => {
       const dialog = document.querySelector('#dialog_selector');
+
+      const table = document.getElementById("result");
+      const rows = table.getElementsByTagName("tr");
+
+      const miframe = document.getElementById("output_frame");
+
+      for (let i = 0; i < rows.length; i++) {
+        let currentRow = table.rows[i];
+        let createClickHandler = (row) => {
+          return () => {
+            let id = row.getElementsByTagName("td")[0].id;
+            miframe.src="http://cgi.u.tsukuba.ac.jp/~s1611468/files/bdetail.cgi?id="+id;
+            dialog.showModal();
+          };
+        };
+        currentRow.onclick = createClickHandler(currentRow);
+      }
 
       if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
       }
-      showDialogButton.addEventListener('click', function() {
-          dialog.showModal();
-      });
       dialog.querySelector('.close').addEventListener('click', function() {
+          miframe.src="";
           dialog.close();
       });
     }
@@ -84,9 +100,14 @@ print <<EOS
               </div>
               <div class="mdl-cell mdl-cell--2-col"></div>
             </div>  
-            
-
 EOS
+if keyw != "" then
+print <<EOS
+<div class="mdl-typography--headline">
+「#{keyw}」 の検索結果
+</div>
+EOS
+end
 print out
 print <<EOS
           </div>
@@ -95,33 +116,13 @@ print <<EOS
     </div>
 
     <dialog id="dialog_selector" class="mdl-dialog" style="position: absolute;width:80%">
-        <h4 class="mdl-dialog__title">Component</h4>
+        <h4 class="mdl-dialog__title">書籍詳細</h4>
         <div class="mdl-dialog__content">
-
-            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-                <div class="mdl-tabs__tab-bar">
-                    <a href="#input-panel" class="mdl-tabs__tab is-active">Inputs</a>
-                    <a href="#operator-panel" class="mdl-tabs__tab">Operators</a>
-                    <a href="#output-panel" class="mdl-tabs__tab">Outputs</a>
-                </div>
-                
-                <div class="mdl-tabs__panel is-active" id="input-panel">
-                <iframe id="input_frame" width="80%" height="50%">
-                </iframe>
-                </div>
-                <div class="mdl-tabs__panel" id="operator-panel">
-                <iframe id="operator_frame" width="80%" height="50%">
-                </iframe>
-                </div>
-                <div class="mdl-tabs__panel" id="output-panel">
-                <iframe id="output_frame" width="80%" height="50%">
-                </iframe>
-                </div>
-            </div>
-
+          <iframe id="output_frame" width="80%" height="50%" style="max-width: 950px;margin: auto;margin-top:50px;">
+          </iframe>
         </div>
         <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button close">Close</button>
+            <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect close">Close</button>
         </div>
     </dialog>
 
