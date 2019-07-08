@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title>WebGL TEST</title>
+</head>
+<!-- 頂点シェーダのソース -->
+<script id="vshader" type="x-shader/x-vertex">
+
+</script>
+<!-- フラグメントシェーダのソース -->
+<script id="fshader" type="x-shader/x-fragment">
+    
+</script>
+<script type="text/javascript">
+'use strict';
+
+window.onload = () => {
+    // canvasエレメントを取得
+    let c = document.getElementById('canvas');
+    c.width = 500;
+    c.height = 300;
+
+    // webglコンテキストを取得
+    let gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+
+    // canvasを黒でクリア(初期化)する
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+</script>
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+</html>
