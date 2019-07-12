@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -48,7 +49,8 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-
+            Log.v("MyGLRenderer","onSurfaceChanged:" + width +  "," + height);
+            myTexture.setSize(width,height);
         }
 
         @Override
@@ -56,8 +58,9 @@ public class MainActivity extends Activity {
             //背景色(R,G,B,ALPHA)
             GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-            //triangle.draw();
-            myTexture.draw();
+            //myTexture.draw();
+            //myTexture.draw_square();
+            myTexture.draw_with_pixel_size(1348,1199);
         }
     }
 
@@ -119,14 +122,27 @@ public class MainActivity extends Activity {
         private ByteBuffer bb1;
         private ByteBuffer bb2;
 
+        private int mWidth = 2;
+        private int mHeight = 2;
+
+        public void setSize(int mWidth,int mHeight){
+            this.mWidth = mWidth;
+            this.mHeight = mHeight;
+        }
+
+        private int mImageWidth;
+        private int mImageHeight;
+
         private int[] texture;
-        private void setupImage(){
+        private void setupImage(int id){
 
             texture = new int[1];
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.lena_color);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),id);
+
+            mImageWidth = bitmap.getWidth();
+            mImageHeight = bitmap.getHeight();
 
             // Bind texture to texturename
-
             GLES20.glGenTextures(1,texture,0);
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
@@ -155,7 +171,7 @@ public class MainActivity extends Activity {
         private  int shaderProgram;
 
         public MyTexture(){
-            setupImage();
+            setupImage(R.drawable.blood);
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
             shaderProgram = GLES20.glCreateProgram();
@@ -175,6 +191,9 @@ public class MainActivity extends Activity {
                 bb2.order(ByteOrder.nativeOrder());
                 uvBuffer = bb2.asFloatBuffer();
             }
+
+            // TODO: 正方形の描画をするには？
+            //
         }
 
         private float[] mMVPMatrix = new float[]{
@@ -182,9 +201,39 @@ public class MainActivity extends Activity {
             0.0f,    1.0f,    0.0f,    0.0f,
             0.0f,    0.0f,    1.0f,    0.0f,
             0.0f,    0.0f,    0.0f,    1.0f
-        };;
+        };
 
+        // デバイス標準形で描画
         public void draw(){
+            this.draw(1.f,1.f);
+        }
+
+        // 正方形で描画
+        public void draw_square(){
+            this.draw_with_size(1,1);
+        }
+
+        // 横を基準のデバイス標準形で描画
+        public void draw_with_size(float size_x,float size_y){
+            this.draw(size_x,size_y*mWidth/(float)mHeight);
+        }
+
+        // 横幅を指定して描画
+        public void draw_with_pixel_size(int size_x,int size_y){
+            this.draw(size_x * (2.0f/this.mWidth),size_y*(2.0f/this.mHeight));
+        }
+
+        public void draw(float size_x,float size_y){
+
+            float x_pos = size_x/2.0f;
+            float y_pos = size_y/2.0f;
+
+            vertices = new float[]{
+                     x_pos,  y_pos,  0.0f, // 右上
+                     x_pos, -y_pos,  0.0f, // 右下
+                    -x_pos,  y_pos,  0.0f, // 左上
+                    -x_pos, -y_pos,  0.0f // 左下
+            };
 
             GLES20.glEnable(GLES20.GL_BLEND);
             GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
@@ -208,67 +257,12 @@ public class MainActivity extends Activity {
             GLES20.glUniform1f(GLES20.glGetUniformLocation(shaderProgram, "Brightness"), 0.0f);
             GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(shaderProgram, "uMVPMatrix"), 1, false, mMVPMatrix, 0);
 
-            //GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, uvs.length/2);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
             GLES20.glDisableVertexAttribArray(mPositionHandle);
             GLES20.glDisableVertexAttribArray(mTexCoordLoc);
             GLES20.glDisable(GLES20.GL_BLEND);
 
-        }
-    }
-
-    public class MyTriangle {
-        //シンプルなシェーダー
-        public final String vertexShaderCode =
-                "attribute  vec4 vPosition;" +
-                        "void main() {" +
-                        "  gl_Position = vPosition;" +
-                        "}";
-        //シンプル色は自分で指定(R,G,B ALPHA)指定
-        public final String fragmentShaderCode =
-                "precision mediump float;" +
-                        "void main() {" +
-                        "  gl_FragColor =vec4(1.0, 0.0, 0.0, 1.0);" +
-                        "}";
-        private int loadShader(int type, String shaderCode){
-            int shader = GLES20.glCreateShader(type);
-            GLES20.glShaderSource(shader, shaderCode);
-            GLES20.glCompileShader(shader);
-            return shader;
-        }
-
-        private  int shaderProgram;
-
-        public MyTriangle(){
-            int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-            shaderProgram = GLES20.glCreateProgram();
-            GLES20.glAttachShader(shaderProgram, vertexShader);
-            GLES20.glAttachShader(shaderProgram, fragmentShader);
-            GLES20.glLinkProgram(shaderProgram);
-        }
-
-        public void draw(){
-            GLES20.glUseProgram(shaderProgram);
-            int positionAttrib = GLES20.glGetAttribLocation(shaderProgram, "vPosition");
-            GLES20.glEnableVertexAttribArray(positionAttrib);
-
-            float vertices[] = {
-                    0.0f, 0.5f, 0.0f,//三角形の点A(x,y,z)
-                    -0.5f, -0.5f, 0.0f,//三角形の点B(x,y,z)
-                    0.5f, -0.5f, 0.0f//三角形の点C(x,y,z)
-            };
-            ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-            bb.order(ByteOrder.nativeOrder());
-            FloatBuffer vertexBuffer = bb.asFloatBuffer();
-            vertexBuffer.put(vertices);
-            vertexBuffer.position(0);
-            //GLES20.glVertexAttribPointer(positionAttrib,vertices.length, GLES20.GL_FLOAT, false, 0, vertexBuffer);
-            GLES20.glVertexAttribPointer(positionAttrib, 3, GLES20.GL_FLOAT, false, 3 *4, vertexBuffer);
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertices.length/3);
-
-            GLES20.glDisableVertexAttribArray(positionAttrib);
         }
     }
 
