@@ -1,1 +1,1 @@
-include ':template', ':sample_native_activity', 'opengles_test1'
+include ':template', ':sample_native_activity', 'opengles_test1', 'opengles_texture1'

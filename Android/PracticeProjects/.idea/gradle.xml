@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/opengles_test1" />
+            <option value="$PROJECT_DIR$/opengles_texture1" />
             <option value="$PROJECT_DIR$/sample_native_activity" />
             <option value="$PROJECT_DIR$/template" />
           </set>

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/PracticeProjects.iml" filepath="$PROJECT_DIR$/PracticeProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/template/app.iml" filepath="$PROJECT_DIR$/template/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/opengles_test1/opengles_test1.iml" filepath="$PROJECT_DIR$/opengles_test1/opengles_test1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/opengles_texture1/opengles_texture1.iml" filepath="$PROJECT_DIR$/opengles_texture1/opengles_texture1.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample_native_activity/sample_native_activity.iml" filepath="$PROJECT_DIR$/sample_native_activity/sample_native_activity.iml" />
       <module fileurl="file://$PROJECT_DIR$/template/template.iml" filepath="$PROJECT_DIR$/template/template.iml" />
     </modules>
