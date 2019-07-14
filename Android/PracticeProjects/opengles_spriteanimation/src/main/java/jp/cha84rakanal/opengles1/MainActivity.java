@@ -55,6 +55,9 @@ public class MainActivity extends Activity {
 
         @Override
         public void onDrawFrame(GL10 unused) {
+
+            //Log.v("GLRenderer","draw");
+
             //背景色(R,G,B,ALPHA)
             GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -101,11 +104,23 @@ public class MainActivity extends Activity {
 
         //画像の方の座標 verticesに対応する様に
 
+        /*
         public float uvs[] = new float[] {
                 1.0f, 0.0f, // 右上に割り当てられる部分
                 1.0f, 1.0f,
                 0.0f, 0.0f,
                 0.0f, 1.0f // 左下に割り当てられる部分
+        };
+        */
+
+        int i = 6;
+        int j = 5;
+
+        public float uvs[] = new float[] {
+                (i + 1)*100.0f/1000.0f, (j)*100.0f/600.0f, // 右上に割り当てられる部分
+                (i + 1)*100.0f/1000.0f, (j + 1)*100.0f/600.0f,
+                (i)*100.0f/1000.0f, (j)*100.0f/600.0f,
+                (i)*100.0f/1000.0f, (j + 1)*100.0f/600.0f // 左下に割り当てられる部分
         };
 
         /*
@@ -171,7 +186,7 @@ public class MainActivity extends Activity {
         private  int shaderProgram;
 
         public MyTexture(){
-            setupImage(R.drawable.lena_color);
+            setupImage(R.drawable.animsprite);
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
             shaderProgram = GLES20.glCreateProgram();
