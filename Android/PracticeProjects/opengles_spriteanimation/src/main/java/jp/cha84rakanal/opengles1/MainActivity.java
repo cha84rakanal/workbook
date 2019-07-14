@@ -42,11 +42,14 @@ public class MainActivity extends Activity {
         //MyTexture myTexture;
         MySpriteAnimation mySpriteAnimation;
 
+        int c_frame = 0;
+
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             //triangle = new MyTriangle();
             //myTexture = new MyTexture();
             mySpriteAnimation = new MySpriteAnimation(R.drawable.animsprite);
+            mySpriteAnimation.setSpriteNum(10,6);
         }
 
         @Override
@@ -67,7 +70,12 @@ public class MainActivity extends Activity {
             //myTexture.draw();
             //myTexture.draw_square();
             //myTexture.draw_with_pixel_size(500,500);
-            mySpriteAnimation.draw();
+            mySpriteAnimation.draw_with_pixel_size(200,200,c_frame);
+            c_frame++;
+            if(c_frame >= 60){
+                c_frame = 0;
+            }
+            //mySpriteAnimation.draw_with_pixel_size(1000,1000);
         }
     }
 
@@ -129,6 +137,11 @@ public class MainActivity extends Activity {
 
         private int mSpriteXNum = 1;
         private int mSpriteYNum = 1;
+
+        public void setSpriteNum(int x,int y){
+            this.mSpriteXNum = x;
+            this.mSpriteYNum = y;
+        }
 
         private int mImageWidth;
         private int mImageHeight;
@@ -199,23 +212,23 @@ public class MainActivity extends Activity {
         }
 
         // デバイス標準形で描画
-        public void draw(){
-            this.draw(1.f,1.f);
+        public void draw(int frame){
+            this.draw_frame(1.f,1.f,frame);
         }
 
         // 正方形で描画
-        public void draw_square(){
-            this.draw_with_size(1,1);
+        public void draw_square(int frame){
+            this.draw_with_size(1,1,frame);
         }
 
         // 横を基準のデバイス標準形で描画
-        public void draw_with_size(float size_x,float size_y){
-            this.draw(size_x,size_y*mWidth/(float)mHeight);
+        public void draw_with_size(float size_x,float size_y,int frame){
+            this.draw_frame(size_x,size_y*mWidth/(float)mHeight,frame);
         }
 
-        // 横幅をpixelで指定して描画
-        public void draw_with_pixel_size(int size_x,int size_y){
-            this.draw(size_x * (2.0f/this.mWidth),size_y*(2.0f/this.mHeight));
+        // pixelで指定して描画
+        public void draw_with_pixel_size(int size_x,int size_y,int frame){
+            this.draw_frame(size_x * (2.0f/this.mWidth),size_y*(2.0f/this.mHeight),frame);
         }
 
         public void draw(float size_x,float size_y){
@@ -228,6 +241,63 @@ public class MainActivity extends Activity {
                     x_pos, -y_pos,  0.0f, // 右下
                     -x_pos,  y_pos,  0.0f, // 左上
                     -x_pos, -y_pos,  0.0f // 左下
+            };
+
+            GLES20.glEnable(GLES20.GL_BLEND);
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+
+            GLES20.glUseProgram(shaderProgram);
+
+            int mPositionHandle = GLES20.glGetAttribLocation(shaderProgram, "vPosition");
+            GLES20.glEnableVertexAttribArray(mPositionHandle);
+            int mTexCoordLoc = GLES20.glGetAttribLocation(shaderProgram, "a_texCoord");
+            GLES20.glEnableVertexAttribArray(mTexCoordLoc);
+            vertexBuffer.put(vertices);
+            vertexBuffer.position(0);
+            uvBuffer.put(uvs);
+            uvBuffer.position(0);
+
+            GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
+            GLES20.glVertexAttribPointer(mTexCoordLoc, 2, GLES20.GL_FLOAT, false, 0, uvBuffer);
+
+            GLES20.glUniform1i(GLES20.glGetUniformLocation(shaderProgram, "s_texture"), 0);
+            GLES20.glUniform1f(GLES20.glGetUniformLocation(shaderProgram, "Opacity"), 1.0f);
+            GLES20.glUniform1f(GLES20.glGetUniformLocation(shaderProgram, "Brightness"), 0.0f);
+            GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(shaderProgram, "uMVPMatrix"), 1, false, mMVPMatrix, 0);
+
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+
+            GLES20.glDisableVertexAttribArray(mPositionHandle);
+            GLES20.glDisableVertexAttribArray(mTexCoordLoc);
+            GLES20.glDisable(GLES20.GL_BLEND);
+
+        }
+
+        public void draw_frame(float size_x,float size_y,int frame){
+
+            float x_pos = size_x/2.0f;
+            float y_pos = size_y/2.0f;
+
+            vertices = new float[]{
+                    x_pos,  y_pos,  0.0f, // 右上
+                    x_pos, -y_pos,  0.0f, // 右下
+                    -x_pos,  y_pos,  0.0f, // 左上
+                    -x_pos, -y_pos,  0.0f // 左下
+            };
+
+
+            int pos_x = 0;
+            int pos_y = 0;
+            if(!(frame <= 0 || mSpriteXNum*mSpriteYNum <= frame)){
+                pos_x = frame%mSpriteXNum;
+                pos_y = frame/mSpriteXNum;
+            }
+
+            uvs = new float[] {
+                    (pos_x + 1)*1.0f/mSpriteXNum, (pos_y)*1.0f/mSpriteYNum, // 右上に割り当てられる部分
+                    (pos_x + 1)*1.0f/mSpriteXNum, (pos_y + 1)*1.0f/mSpriteYNum,
+                    (pos_x)*1.0f/mSpriteXNum, (pos_y)*1.0f/mSpriteYNum,
+                    (pos_x)*1.0f/mSpriteXNum, (pos_y + 1)*1.0f/mSpriteYNum // 左下に割り当てられる部分
             };
 
             GLES20.glEnable(GLES20.GL_BLEND);
