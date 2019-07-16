@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
             //myTexture.draw();
             //myTexture.draw_square();
             //myTexture.draw_with_pixel_size(500,500);
+            mySpriteAnimation.setPosition_with_pixel_size(0,100);
             mySpriteAnimation.draw_with_pixel_size(200,200,c_frame);
             c_frame++;
             if(c_frame >= 60){
@@ -271,6 +272,16 @@ public class MainActivity extends Activity {
             GLES20.glDisableVertexAttribArray(mTexCoordLoc);
             GLES20.glDisable(GLES20.GL_BLEND);
 
+        }
+
+        public void setPosition(float pos_x,float pos_y){
+            mMVPMatrix[12] = pos_x;
+            mMVPMatrix[13] = pos_y;
+        }
+
+        public void setPosition_with_pixel_size(int pos_x,int pos_y){
+            mMVPMatrix[12] = (float)pos_x*(2.0f/this.mWidth);
+            mMVPMatrix[13] = (float)pos_y*(2.0f/this.mHeight);
         }
 
         public void draw_frame(float size_x,float size_y,int frame){
