@@ -156,6 +156,7 @@ Desktop.ini
 
 # Android
 .csettings
+bin/
 
 # user
 /Metal/MetalBook
@@ -168,3 +169,9 @@ a.out
 *.f90
 
 Android/temp
+
+# NDS
+NDS/mnist/source/*
+NDS/mnist/include/*
+!NDS/mnist/source/main.c
+!NDS/mnist/source/Validation_*
