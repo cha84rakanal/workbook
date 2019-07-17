@@ -5,11 +5,12 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "Validation_inference.h"
 #include "Validation_parameters.h"
 
-int DrawGLScene(float a,float b);
+int DrawPoint(float x,float y,float r,float reso);
 
 //---------------------------------------------------------------------------------
 int main(void) {
@@ -90,9 +91,11 @@ int main(void) {
         //iprintf("\x1b[13;12H(%d,%d)      ",(int)(((touchXY.px/255.0f)*4.f)-2.f)*1000,(int)(((touchXY.py/191.0f)*3.f)-1.5f))*1000;
 
         glPushMatrix();
-        DrawGLScene(
+        DrawPoint(
             ((touchXY.px/255.0f)*2.f)-1.f,
-            -(((touchXY.py/191.0f)*2.f)-1.f)
+            -(((touchXY.py/191.0f)*2.f)-1.f),
+            0.04f,
+            10
         );
         glPopMatrix(1);
 
@@ -103,14 +106,24 @@ int main(void) {
 
 }
 
-int DrawGLScene(float a,float b) {
+int DrawPoint(float x_pos,float y_pos,float r,float reso) {
 	
-	glLoadIdentity();									// Reset The Current Modelview Matrix
-	glTranslatef(a,b,0.0f);
-	glBegin(GL_TRIANGLES);								// Drawing Using Triangles
-		glVertex3f( 0.0f, 0.25f, 0.0f);					// Top
-		glVertex3f(-0.25f,-0.25f, 0.0f);					// Bottom Left
-		glVertex3f( 0.25f,-0.25f, 0.0f);					// Bottom Right
-	glEnd();											// Finished Drawing The Triangle
+    glLoadIdentity();
+	glTranslatef(x_pos,y_pos,0.0f);
+    float x;
+    float y;
+    glBegin(GL_TRIANGLES);	
+    for (int i = 0; i < reso; i++) {
+        glVertex3f( 0.0f, 0.0f, 0.0f);
+        x = r * cos(2.0 * 3.14 * ((float)i/reso));
+        y = r * sin(2.0 * 3.14 * ((float)i/reso)) *255.0f/191.0f;
+        glVertex3f(x, y, 0.0);
+        x = r * cos(2.0 * 3.14 * ((float)(i+1)/reso));
+        y = r * sin(2.0 * 3.14 * ((float)(i+1)/reso)) *255.0f/191.0f;
+        glVertex3f(x, y, 0.0);
+    }
+    glEnd();
+
     return TRUE;
+
 }
