@@ -67,6 +67,22 @@ int main(void) {
         for(int ix = 0; ix < 256; ix++) 
             backBuffer[iy * 256 + ix] = (0x00) | BIT(15);
 
+    //40-151
+    //72-183
+    for(int iy=39;iy < 152+1;iy++){
+        backBuffer[iy * 256 + 71] = 0xFFFF;
+        backBuffer[iy * 256 + 70] = 0xFFFF;
+        backBuffer[iy * 256 + 184] = 0xFFFF;
+        backBuffer[iy * 256 + 185] = 0xFFFF;
+    }
+
+    for(int ix=70;ix < 185+1;ix++){
+        backBuffer[38 * 256 + ix] = 0xFFFF;
+        backBuffer[39 * 256 + ix] = 0xFFFF;
+        backBuffer[152 * 256 + ix] = 0xFFFF;
+        backBuffer[153 * 256 + ix] = 0xFFFF;
+    }
+
     backBuffer = (u16*)bgGetGfxPtr(bg);
     bgSetMapBase(bg, 8);
 
@@ -133,6 +149,19 @@ int main(void) {
                     backBuffer[(y) * 256 + (x)] = 0x0000;
                 }
             }
+            for(int iy=39;iy < 152+1;iy++){
+                backBuffer[iy * 256 + 71] = 0xFFFF;
+                backBuffer[iy * 256 + 70] = 0xFFFF;
+                backBuffer[iy * 256 + 184] = 0xFFFF;
+                backBuffer[iy * 256 + 185] = 0xFFFF;
+            }
+
+            for(int ix=70;ix < 185+1;ix++){
+                backBuffer[38 * 256 + ix] = 0xFFFF;
+                backBuffer[39 * 256 + ix] = 0xFFFF;
+                backBuffer[152 * 256 + ix] = 0xFFFF;
+                backBuffer[153 * 256 + ix] = 0xFFFF;
+            }
         }
 
         if(((keysCurrent() & KEY_TOUCH) == 4096)){
@@ -140,7 +169,8 @@ int main(void) {
             for(int y = 0;y < 192;y++){
                 for(int x = 0;x < 256;x++){
                     if((y - touchXY.py)*(y - touchXY.py) + (x - touchXY.px)*(x - touchXY.px) <= 35){
-                        backBuffer[(y) * 256 + (x)] = 0xFFFF;
+                        if(40 <= y && y < 152 && 72 <= x && x < 184)
+                            backBuffer[(y) * 256 + (x)] = 0xFFFF;
                     }
                 }
             }
