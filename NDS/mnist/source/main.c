@@ -217,6 +217,9 @@ int main(void) {
             bgSetMapBase(bg, 8);
         }
 
+        iprintf("\x1b[18;0H Button A: Start       ");
+        iprintf("\x1b[19;0H Button B: Clear       ");
+
 	}
 
     nnablart_validation_free_context(_context);
