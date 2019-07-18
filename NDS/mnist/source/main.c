@@ -164,16 +164,16 @@ int main(void) {
                 }
             }
 
-            iprintf("\x1b[5;0H[%d] : %010d",0,(int)(pred[0]*100000));
-            iprintf("\x1b[6;0H[%d] : %010d",1,(int)(pred[1]*100000));
-            iprintf("\x1b[7;0H[%d] : %010d",2,(int)(pred[2]*100000));
-            iprintf("\x1b[8;0H[%d] : %010d",3,(int)(pred[3]*100000));
-            iprintf("\x1b[9;0H[%d] : %010d",4,(int)(pred[4]*100000));
-            iprintf("\x1b[10;0H[%d] : %010d",5,(int)(pred[5]*100000));
-            iprintf("\x1b[11;0H[%d] : %010d",6,(int)(pred[6]*100000));
-            iprintf("\x1b[12;0H[%d] : %010d",7,(int)(pred[7]*100000));
-            iprintf("\x1b[13;0H[%d] : %010d",8,(int)(pred[8]*100000));
-            iprintf("\x1b[14;0H[%d] : %010d",9,(int)(pred[9]*100000));
+            iprintf("\x1b[5;0H[%d] : %3d.%03d%%",0,(int)(pred[0]*10000)/100,(int)(pred[0]*10000)%100);
+            iprintf("\x1b[6;0H[%d] : %3d.%03d%%",1,(int)(pred[1]*10000)/100,(int)(pred[1]*10000)%100);
+            iprintf("\x1b[7;0H[%d] : %3d.%03d%%",2,(int)(pred[2]*10000)/100,(int)(pred[2]*10000)%100);
+            iprintf("\x1b[8;0H[%d] : %3d.%03d%%",3,(int)(pred[3]*10000)/100,(int)(pred[3]*10000)%100);
+            iprintf("\x1b[9;0H[%d] : %3d.%03d%%",4,(int)(pred[4]*10000)/100,(int)(pred[4]*10000)%100);
+            iprintf("\x1b[10;0H[%d] : %3d.%03d%%",5,(int)(pred[5]*10000)/100,(int)(pred[5]*10000)%100);
+            iprintf("\x1b[11;0H[%d] : %3d.%03d%%",6,(int)(pred[6]*10000)/100,(int)(pred[6]*10000)%100);
+            iprintf("\x1b[12;0H[%d] : %3d.%03d%%",7,(int)(pred[7]*10000)/100,(int)(pred[7]*10000)%100);
+            iprintf("\x1b[13;0H[%d] : %3d.%03d%%",8,(int)(pred[8]*10000)/100,(int)(pred[8]*10000)%100);
+            iprintf("\x1b[14;0H[%d] : %3d.%03d%%",9,(int)(pred[9]*10000)/100,(int)(pred[9]*10000)%100);
 
             iprintf("\x1b[16;0Hresults: %d",top_class);
 
