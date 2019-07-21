@@ -5,7 +5,7 @@ using System.Linq;
 
 public static class ApplicationBuild {
 
-    private static string[] GetAllScenePaths() {
+    private static string[] GetAllSelectedPaths() {
         return EditorBuildSettings.scenes
             .Where(scene => scene.enabled)
             .Select(scene => scene.path)
@@ -14,7 +14,7 @@ public static class ApplicationBuild {
 
     public static void AndroidBuild() {
 
-        string[] scenes = GetAllScenePaths();
+        string[] scenes = GetAllSelectedPaths();
         BuildPipeline.BuildPlayer(scenes, "../temp/", BuildTarget.Android, BuildOptions.AcceptExternalModificationsToPlayer);
         
     }
