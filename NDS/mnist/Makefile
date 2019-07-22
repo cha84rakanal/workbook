@@ -27,7 +27,7 @@ include $(DEVKITARM)/ds_rules
 TARGET   := $(shell basename $(CURDIR))
 BUILD    := build
 SOURCES  := source
-INCLUDES := include
+INCLUDES := include $(DEVKITARM)/arm-none-eabi/include/c++/8.2.0
 DATA     := data
 GRAPHICS :=
 AUDIO    :=
