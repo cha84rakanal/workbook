@@ -175,3 +175,6 @@ NDS/mnist/source/*
 NDS/mnist/include/*
 !NDS/mnist/source/main.c
 !NDS/mnist/source/Validation_*
+
+# ASM
+!Assembly/**/*.asm
